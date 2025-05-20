@@ -172,4 +172,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  images: []
+  images:
+  - {fileID: 21300000, guid: 1b26b275fc48ae24cb38cdda2aad837b, type: 3}
+  - {fileID: 21300000, guid: a16b12054868b074ba1a0fc416d9b114, type: 3}

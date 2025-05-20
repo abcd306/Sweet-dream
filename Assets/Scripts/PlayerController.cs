@@ -10,6 +10,9 @@ public class PlayerController : MonoBehaviour
     private int currentLives;
     private bool isInvincible;
 
+    [SerializeField] private GameObject healingEffectPrefab;
+    [SerializeField] private Transform healingEffectPoint;
+
     private void Start()
     {
         currentLives = maxLives;
@@ -34,6 +37,7 @@ public class PlayerController : MonoBehaviour
 
         currentLives--;
         UIManager.instance.UpdateLivesUI(currentLives);
+        RestoreFullHP();
 
         if (currentLives <= 0)
         {
@@ -55,7 +59,21 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("Game Over");
     }
+
+    //Ctrl + K → Ctrl + C(주석 처리)
+    //Ctrl + K → Ctrl + U(주석 해제)
+    public void RestoreFullHP()
+    {
+        currentLives = maxLives;
+        UIManager.instance.UpdateLivesUI(currentLives);
+        PlayHealingEffect();
+    }
+    void PlayHealingEffect()
+    {
+        if (healingEffectPrefab != null && healingEffectPoint != null)
+        {
+            GameObject effect = Instantiate(healingEffectPrefab, healingEffectPoint.position, Quaternion.identity);
+            Destroy(effect, 2f); // 2초 후 자동 삭제
+        }
+    }
 }
-//public void RestoreFullHP()
-//currentLives = maxLives;
-//UIManager.instance.UpdateLivesUI(currentLives);
