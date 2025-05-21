@@ -11,8 +11,6 @@ public class UIManager : MonoBehaviour
     public Image[] heartImages;
     public TextMeshProUGUI coinText;
 
-    private int coinCount = 0;
-
     private void Awake()
     {
         if (instance == null)
@@ -24,7 +22,7 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         UpdateLivesUI(heartImages.Length);
-        UpdateCoinUI();
+        UpdateCoinUI(0);
     }
 
     public void UpdateLivesUI(int lives)
@@ -35,17 +33,11 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void AddCoin()
-    {
-        coinCount++;
-        UpdateCoinUI();
-    }
-
-    public void UpdateCoinUI()
+    public void UpdateCoinUI(int coinCount)
     {
         if (coinText != null)
         {
-            coinText.text = $"¡¿{coinCount}";
+            coinText.text = $"¡¿ {coinCount}";
         }
     }
 }

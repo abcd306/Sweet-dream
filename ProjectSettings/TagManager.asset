@@ -4,8 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
+  - Lightning
   - Coin
-  - Obstacle
   layers:
   - Default
   - TransparentFX
