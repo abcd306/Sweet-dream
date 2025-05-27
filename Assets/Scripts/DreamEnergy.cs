@@ -4,21 +4,10 @@ using UnityEngine;
 
 public class DreamEnergy : MonoBehaviour
 {
-    public static DreamEnergy instance;
+    public float moveSpeed = 5f;
+    private float destroyX = -15f;
 
-    public float moveSpeed = 5f;        // 장애물 이동 속도
-    private float destroyX = -15f;      // 이 위치보다 왼쪽으로 가면 삭제
-
-    private void Awake()
-    {
-        if (instance == null) instance = this;
-    }
-
-    //void Start()            시작할 때 쉴드 비활성화
-    //{
-    //    if (shieldObject != null)
-    //        shieldObject.SetActive(false);
-    //}
+    public GameObject CoinEffectPrefab; // 파티클 프리팹 실험용
 
     void Update()
     {
@@ -30,12 +19,17 @@ public class DreamEnergy : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)    // 파티클 프리팹 실험용
     {
         if (other.CompareTag("Player"))
         {
-            PlayerController.instance.AddCoin();
-            Destroy(gameObject);
+            GameObject effect = Instantiate(CoinEffectPrefab, transform.position, Quaternion.identity);
+
+            // 파티클 바로 재생
+            ParticleSystem ps = effect.GetComponent<ParticleSystem>();
+            if (ps != null) ps.Play();
+
+            Destroy(gameObject); // 코인 파괴
         }
     }
 }

@@ -9,20 +9,25 @@ public class UIManager : MonoBehaviour
     public static UIManager instance;
 
     public Image[] heartImages;
+    public Image coinIcon;                 // 드림에너지 코인 이미지
     public TextMeshProUGUI coinText;
-
     private void Awake()
     {
         if (instance == null)
+        {
             instance = this;
+            DontDestroyOnLoad(gameObject);  // 씬 전환 시 파괴되지 않도록 유지
+        }
         else
+        {
             Destroy(gameObject);
+        }
     }
 
     private void Start()
     {
         UpdateLivesUI(heartImages.Length);
-        UpdateCoinUI(0);
+        HideCoinUI();
     }
 
     public void UpdateLivesUI(int lives)
@@ -33,11 +38,21 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void UpdateCoinUI(int coinCount)
+    public void UpdateCoinUI(int collected, int required)
     {
-        if (coinText != null)
+        bool showCoinUI = required > 0;
+        coinIcon.gameObject.SetActive(showCoinUI);
+        coinText.gameObject.SetActive(showCoinUI);
+
+        if (showCoinUI)
         {
-            coinText.text = $"× {coinCount}";
+            coinText.text = $"{collected} / {required}";
         }
+    }
+
+    public void HideCoinUI()
+    {
+        coinIcon.gameObject.SetActive(false);
+        coinText.gameObject.SetActive(false);
     }
 }

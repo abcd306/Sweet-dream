@@ -8,17 +8,12 @@ public class PlayerController : MonoBehaviour
 
     private int maxLives = 3;
     private int currentLives;
-    
     private float invincibleTime = 1.5f;
     private bool isInvincible;
-    bool isHurt;
 
-    public GameObject shieldObject;
-    public float shieldDuration = 2f;
-    [HideInInspector]
-    public bool isShieldActive = false;
-
-    private int coinCount = 0;
+    //public GameObject shieldObject;
+    //public float shieldDuration = 2f;
+    //[HideInInspector] public bool isShieldActive = false;
 
     SpriteRenderer spr;
     Color halfA = new Color(1, 1, 1, 0.5f);
@@ -28,27 +23,22 @@ public class PlayerController : MonoBehaviour
     {
         if (instance == null)
             instance = this;
-        else
-            Destroy(gameObject);
+        else Destroy(gameObject);
     }
-
-
 
     private void Start()
     {
-        currentLives = maxLives;
-        UIManager.instance.UpdateLivesUI(currentLives);
-        UIManager.instance.UpdateCoinUI(coinCount);
         spr = GetComponent<SpriteRenderer>();
+        RestoreFullHP();
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            ActivateShield();
-        }
-    }
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.X))
+    //    {
+    //        ActivateShield();
+    //    }
+    //}
 
     public void TakeDamage()
     {
@@ -64,28 +54,23 @@ public class PlayerController : MonoBehaviour
         else
         {
             isInvincible = true;
-            isHurt = true;
             StartCoroutine(AlphaBlink());
             Invoke("StopInvincible", invincibleTime);
         }
     }
 
-    void StopInvincible()
+    // 즉사 처리용 메서드 (Die랑 합쳐도됌, 추후 수정)
+    public void ForceDie()
     {
-        isInvincible = false;
-        isHurt = false;
-        spr.color = fullA;
+        currentLives = 0;
+        UIManager.instance.UpdateLivesUI(currentLives);
+        Die();
     }
 
-    IEnumerator AlphaBlink()        // 충돌 시 플레이어 깜빡임
+    public void RestoreFullHP()    // 챕터 넘어갈 때 라이프 초기화
     {
-        while (isHurt)
-        {
-            spr.color = halfA;
-            yield return new WaitForSeconds(0.1f);
-            spr.color = fullA;
-            yield return new WaitForSeconds(0.1f);
-        }
+        currentLives = maxLives;
+        UIManager.instance.UpdateLivesUI(currentLives);
     }
 
     void Die()
@@ -93,63 +78,69 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Game Over");
     }
 
-    //Ctrl + K → Ctrl + C(주석 처리)
-    //Ctrl + K → Ctrl + U(주석 해제)
-    public void RestoreFullHP()         // 챕터 넘어갈 때 라이프 초기화
+    void StopInvincible()
     {
-        currentLives = maxLives;
-        UIManager.instance.UpdateLivesUI(currentLives);
+        isInvincible = false;
+        spr.color = fullA;
     }
 
-    public void AddCoin()
+    IEnumerator AlphaBlink()        // 충돌 시 플레이어 깜빡임
     {
-        coinCount++;
-        UIManager.instance.UpdateCoinUI(coinCount);
-    }
-
-    public bool UseShield()
-    {
-        if (coinCount < 1)
-            return false;
-
-        coinCount--;
-        UIManager.instance.UpdateCoinUI(coinCount);
-
-        return true;
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Lightning"))
+        while (isInvincible)
         {
-            if (DreamEnergy.instance != null && isShieldActive)
-            {
-                Destroy(other.gameObject);  // 쉴드 있으면 데미지 안 입음
-            }
-            else
-            {
-                TakeDamage();               // 쉴드 없으면 데미지
-                Destroy(other.gameObject);
-            }
+            spr.color = halfA;
+            yield return new WaitForSeconds(0.2f);
+            spr.color = fullA;
+            yield return new WaitForSeconds(0.2f);
         }
     }
 
-    public void ActivateShield()
-    {
-        if (isShieldActive) return;
+    //Ctrl + K → Ctrl + C(주석 처리)
+    //Ctrl + K → Ctrl + U(주석 해제)
 
-        bool success = UseShield();
-        if (!success) return;
+    //public bool UseShield()
+    //{
+    //    if (coinCount < 1)
+    //        return false;
 
-        isShieldActive = true;
-        StartCoroutine(ShieldRoutine());
-    }
+    //    coinCount--;
+    //    UIManager.instance.UpdateCoinUI(coinCount);
 
-    private IEnumerator ShieldRoutine()
-    {
-        shieldObject.SetActive(true);
-        yield return new WaitForSeconds(shieldDuration);
-        shieldObject.SetActive(false);
-        isShieldActive = false;
-    }
+    //    return true;
+    //}
+
+    //private void OnTriggerEnter2D(Collider2D other)
+    //{
+    //    if (other.CompareTag("Lightning"))
+    //    {
+    //        if (DreamEnergy.instance != null && isShieldActive)
+    //        {
+    //            Destroy(other.gameObject);  // 쉴드 있으면 데미지 안 입음
+    //        }
+    //        else
+    //        {
+    //            TakeDamage();               // 쉴드 없으면 데미지
+    //            Destroy(other.gameObject);
+    //        }
+    //    }
+    //}
+
+//    public void ActivateShield()
+//    {
+//        if (isShieldActive) return;
+
+//        bool success = UseShield();
+//        if (!success) return;
+
+//        isShieldActive = true;
+//        StartCoroutine(ShieldRoutine());
+//    }
+
+//    private IEnumerator ShieldRoutine()
+//    {
+//        shieldObject.SetActive(true);
+//        yield return new WaitForSeconds(shieldDuration);
+//        shieldObject.SetActive(false);
+//        isShieldActive = false;
+//    }
 }
